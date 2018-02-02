@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="recycler_divider_height">0.3dp</dimen>
+    <dimen name="content_detail_title_height">80dp</dimen>
+</resources>
