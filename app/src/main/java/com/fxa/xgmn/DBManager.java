@@ -82,6 +82,7 @@ public class DBManager {
             Log.e("sql", "sql->" + sql.toString());
             Cursor cursor = sqliteDB.rawQuery(sql.toString(), null);
             while (cursor.moveToNext()) {
+                int id = cursor.getInt(cursor.getColumnIndex("id"));
                 String name = cursor.getString(cursor.getColumnIndex("name"));
                 String type = cursor.getString(cursor.getColumnIndex("type"));
                 String url = cursor.getString(cursor.getColumnIndex("url"));
@@ -89,6 +90,7 @@ public class DBManager {
                 imageResult.name = name;
                 imageResult.type = type;
                 imageResult.url = url;
+                imageResult.id = id;
                 imageResults.add(imageResult);
             }
         } catch (Exception e) {
@@ -112,6 +114,7 @@ public class DBManager {
             imageResult.name = name;
             imageResult.type = type;
             imageResult.url = url;
+            imageResult.id = id;
             return imageResult;
         } catch (Exception e) {
             e.printStackTrace();

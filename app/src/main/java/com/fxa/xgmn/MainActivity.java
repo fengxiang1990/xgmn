@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     public static String TYPE_SW = "swmn";
     public static String TYPE_BJN = "bjnmn";
     public static String TYPE_HG = "hgmn";
-    public static String TYPE_WG = "wgmv";
+    public static String TYPE_WG = "wgmn";
 
 
     Toolbar toolbar;

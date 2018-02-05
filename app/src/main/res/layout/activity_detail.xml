@@ -2,30 +2,29 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/background_dark"
-   >
+    android:background="@android:color/background_dark">
 
-    <com.bm.library.PhotoView
-        android:id="@+id/img"
+
+    <com.fxa.xgmn.PhotoViewPager
+        android:id="@+id/viewPager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"></com.fxa.xgmn.PhotoViewPager>
 
     <Button
         android:id="@+id/btn_setwallpage"
         android:layout_width="150dp"
+        android:layout_margin="15dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center|bottom"
-        android:layout_marginBottom="20dp"
         android:background="@drawable/btn_setwallpage_selector"
         android:text="设为壁纸"
         android:textColor="@android:color/white" />
-
 
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:visibility="gone" />
+        android:visibility="invisible" />
 
 </FrameLayout>

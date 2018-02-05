@@ -1,6 +1,8 @@
 package com.fxa.xgmn;
 
-public class ImageResult {
+import java.io.Serializable;
+
+public class ImageResult implements Serializable{
 
     public int id;
 

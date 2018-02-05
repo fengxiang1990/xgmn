@@ -189,7 +189,7 @@ public class ImageFragment extends Fragment {
                                 @Override
                                 public void onClick(View v) {
                                     Intent intent = new Intent(getActivity(), DetailActivity.class);
-                                    intent.putExtra("url", imageResult.url);
+                                    intent.putExtra("result", imageResult);
                                     startActivity(intent);
                                 }
                             });
