@@ -1,8 +1,10 @@
 package com.fxa.xgmn;
 
+import android.app.WallpaperManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -33,10 +35,13 @@ public class DetailActivity extends AppCompatActivity {
 
     Bitmap resource;
 
+    WallpaperManager wallpaperManager;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+        wallpaperManager = WallpaperManager.getInstance(this);
         btn_setwallpage = findViewById(R.id.btn_setwallpage);
         progressBar = findViewById(R.id.progressBar);
         btn_setwallpage.setEnabled(false);
@@ -59,17 +64,42 @@ public class DetailActivity extends AppCompatActivity {
         btn_setwallpage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    setWallpaper(DetailActivity.this.resource);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                Toast.makeText(DetailActivity.this, "设置壁纸成功", Toast.LENGTH_SHORT).show();
+                progressBar.setVisibility(View.VISIBLE);
+                new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            wallpaperManager.setBitmap(DetailActivity.this.resource);
+                            handler.sendEmptyMessage(set_success);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            handler.sendEmptyMessage(set_faild);
+                        }
+                    }
+                }.start();
+
             }
         });
     }
 
-    Handler handler = new Handler();
+    final int set_success = 1;
+    final int set_faild = 2;
+
+    Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case set_success:
+                    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(DetailActivity.this, "设置壁纸成功", Toast.LENGTH_SHORT).show();
+                    break;
+                case set_faild:
+                    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(DetailActivity.this, "设置壁纸失败", Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+    };
 
     @Override
     protected void onDestroy() {

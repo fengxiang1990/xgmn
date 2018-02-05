@@ -2,8 +2,8 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/background_dark">
-
+    android:background="@android:color/background_dark"
+   >
 
     <com.bm.library.PhotoView
         android:id="@+id/img"
@@ -16,16 +16,16 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center|bottom"
         android:layout_marginBottom="20dp"
-        android:background="@android:color/white"
-        android:text="设置壁纸"
-        android:textColor="@android:color/holo_red_dark" />
+        android:background="@drawable/btn_setwallpage_selector"
+        android:text="设为壁纸"
+        android:textColor="@android:color/white" />
 
 
     <ProgressBar
         android:id="@+id/progressBar"
-        android:layout_gravity="center"
-        android:visibility="gone"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
 
 </FrameLayout>

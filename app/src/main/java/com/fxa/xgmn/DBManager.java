@@ -58,25 +58,29 @@ public class DBManager {
         return SQLiteDatabase.openOrCreateDatabase(jhPath, null);
     }
 
-    public static int count(@NonNull SQLiteDatabase sqliteDB,@NonNull String type){
-        Cursor cursor = sqliteDB.rawQuery("select count(*) from image where type = '"+type+"'",null);
+    public static int count(@NonNull SQLiteDatabase sqliteDB, @NonNull String type) {
+        StringBuilder sql = new StringBuilder("select count(*) from image where 1=1");
+        if (!TextUtils.isEmpty(type) && !type.equals("all")) {
+            sql.append(" and type= '" + type + "'");
+        }
+        Cursor cursor = sqliteDB.rawQuery(sql.toString(), null);
         cursor.moveToFirst();
-        int count= cursor.getInt(0);
+        int count = cursor.getInt(0);
         return count;
     }
 
     //查询
-    public static List<ImageResult> query(@NonNull SQLiteDatabase sqliteDB, String imgtype, @NonNull int pageNumber,@NonNull int pageSize) {
+    public static List<ImageResult> query(@NonNull SQLiteDatabase sqliteDB, String imgtype, @NonNull int pageNumber, @NonNull int pageSize) {
         List<ImageResult> imageResults = new ArrayList<>();
         try {
-            StringBuilder sql  = new StringBuilder("select * from image where 1=1");
-            if(!TextUtils.isEmpty(imgtype)){
-                sql.append(" and type= '"+imgtype+"'");
+            StringBuilder sql = new StringBuilder("select * from image where 1=1");
+            if (!TextUtils.isEmpty(imgtype) && !imgtype.equals("all")) {
+                sql.append(" and type= '" + imgtype + "'");
             }
             sql.append(" limit ").append(pageSize);
-            sql.append(" offset ").append((pageNumber-1)* pageSize);
-            Log.e("sql","sql->"+sql.toString());
-            Cursor cursor = sqliteDB.rawQuery(sql.toString(),null);
+            sql.append(" offset ").append((pageNumber - 1) * pageSize);
+            Log.e("sql", "sql->" + sql.toString());
+            Cursor cursor = sqliteDB.rawQuery(sql.toString(), null);
             while (cursor.moveToNext()) {
                 String name = cursor.getString(cursor.getColumnIndex("name"));
                 String type = cursor.getString(cursor.getColumnIndex("type"));
@@ -91,6 +95,28 @@ public class DBManager {
             e.printStackTrace();
         }
         return imageResults;
+    }
+
+
+    //查询
+    public static ImageResult queryById(@NonNull SQLiteDatabase sqliteDB, int id) {
+        try {
+            StringBuilder sql = new StringBuilder("select * from image where id=" + id + "");
+            Log.e("sql", "sql->" + sql.toString());
+            Cursor cursor = sqliteDB.rawQuery(sql.toString(), null);
+            cursor.moveToFirst();
+            String name = cursor.getString(cursor.getColumnIndex("name"));
+            String type = cursor.getString(cursor.getColumnIndex("type"));
+            String url = cursor.getString(cursor.getColumnIndex("url"));
+            ImageResult imageResult = new ImageResult();
+            imageResult.name = name;
+            imageResult.type = type;
+            imageResult.url = url;
+            return imageResult;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

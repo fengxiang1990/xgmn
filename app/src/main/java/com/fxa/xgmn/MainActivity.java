@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static String tag = "MainActivity";
 
+    public static String TYPE_ALL = "all";
     public static String TYPE_XG = "xgmn";
     public static String TYPE_QC = "qcmn";
     public static String TYPE_NY = "nymn";
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimary));
         sqLiteDatabase = DBManager.initDB(this);
 
         setContentView(R.layout.activity_main);
@@ -50,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         titles = new ArrayList();
+        titles.add("所有");
         titles.add("性感");
         titles.add("清纯");
         titles.add("内衣");
@@ -59,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
         titles.add("外国");
 
 
+        ImageFragment all = (ImageFragment) ImageFragment.instantiate(this, ImageFragment.class.getName());
         ImageFragment xg = (ImageFragment) ImageFragment.instantiate(this, ImageFragment.class.getName());
         ImageFragment qc = (ImageFragment) ImageFragment.instantiate(this, ImageFragment.class.getName());
         ImageFragment ny = (ImageFragment) ImageFragment.instantiate(this, ImageFragment.class.getName());
@@ -67,7 +71,12 @@ public class MainActivity extends AppCompatActivity {
         ImageFragment hg = (ImageFragment) ImageFragment.instantiate(this, ImageFragment.class.getName());
         ImageFragment wg = (ImageFragment) ImageFragment.instantiate(this, ImageFragment.class.getName());
 
+
         Bundle bundle = new Bundle();
+        bundle.putString("type", TYPE_ALL);
+        all.setArguments(bundle);
+
+        bundle = new Bundle();
         bundle.putString("type", TYPE_XG);
         xg.setArguments(bundle);
 
@@ -97,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         List<ImageFragment> fragments = new ArrayList<>();
+        fragments.add(all);
         fragments.add(xg);
         fragments.add(qc);
         fragments.add(ny);
@@ -112,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.addTab(tabLayout.newTab().setText(titles.get(4)));
         tabLayout.addTab(tabLayout.newTab().setText(titles.get(5)));
         tabLayout.addTab(tabLayout.newTab().setText(titles.get(6)));
+        tabLayout.addTab(tabLayout.newTab().setText(titles.get(7)));
         viewPager.setAdapter(new ImageFragmentPager(getSupportFragmentManager(), fragments));
 
         tabLayout.setupWithViewPager(viewPager);
