@@ -63,7 +63,11 @@ public class ImageFragment extends Fragment {
 
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.loading_more, null);
 
+
+        recyclerViewFinal.setArrowImageView(R.mipmap.ic_refresh);
+
         recyclerViewFinal.setFootView(view, new CustomFooterViewCallBack() {
+
             @Override
             public void onLoadingMore(View yourFooterView) {
 
