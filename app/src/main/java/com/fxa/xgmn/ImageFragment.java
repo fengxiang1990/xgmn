@@ -44,7 +44,7 @@ public class ImageFragment extends Fragment {
     String type;
     int totalCount = 0;
     int pageNumber = 1;
-    int pageSize = 20;
+    int pageSize = 12;
     int screenWidth = 0;
     int totalPage = 0;
     boolean isRefresh = false;
