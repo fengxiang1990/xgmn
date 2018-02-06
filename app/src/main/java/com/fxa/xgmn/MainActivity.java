@@ -9,10 +9,14 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import abc.abc.abc.nm.sp.SplashViewSettings;
+import abc.abc.abc.nm.sp.SpotManager;
+import abc.abc.abc.nm.sp.SpotRequestListener;
 import fxa.com.xgmn.R;
 
 public class MainActivity extends AppCompatActivity {
@@ -43,8 +47,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimary));
-        sqLiteDatabase = DBManager.initDB(this);
-
+        sqLiteDatabase = ((MyApplication)getApplication()).sqLiteDatabase;
         setContentView(R.layout.activity_main);
         toolbar = findViewById(R.id.toolbar);
         tabLayout = findViewById(R.id.tabLayout);

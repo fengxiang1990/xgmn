@@ -9,6 +9,7 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -61,7 +62,7 @@ public class DetailActivity extends AppCompatActivity {
         imageResultList.add(imageResult);
         adapter = new MyImageAdapter(imageResultList, this);
         mViewPager.setAdapter(adapter);
-        sqLiteDatabase = DBManager.initDB(this);
+        sqLiteDatabase = ((MyApplication)getApplication()).sqLiteDatabase;
         progressBar.setVisibility(View.GONE);
         new Thread() {
             @Override
@@ -135,11 +136,20 @@ public class DetailActivity extends AppCompatActivity {
                 case load_all:
                     Bundle bundle = msg.getData();
                     SparseArray<ImageResult> array = bundle.getSparseParcelableArray("data");
-
                     for (int i = 0; i < array.size(); i++) {
                         imageResultList.add(array.get(i));
                     }
                     adapter.notifyDataSetChanged();
+                    int item = 0;
+                    Log.e(tag, imageResult.toString());
+                    for (int i = 0; i < imageResultList.size(); i++) {
+                        ImageResult imageResult1 = imageResultList.get(i);
+                        if (imageResult1.id == imageResult.id) {
+                            item = i;
+                            break;
+                        }
+                    }
+                    mViewPager.setCurrentItem(item);
                     break;
             }
         }
