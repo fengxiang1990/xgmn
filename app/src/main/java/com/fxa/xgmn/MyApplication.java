@@ -10,9 +10,13 @@ import android.database.sqlite.SQLiteDatabase;
 public class MyApplication extends Application{
 
     SQLiteDatabase sqLiteDatabase;
+    MyMemeryCache cache;
+
     @Override
     public void onCreate() {
         super.onCreate();
         sqLiteDatabase = DBManager.initDB(this);
+        cache = new MyMemeryCache(4 * 1024 * 1024);
+
     }
 }

@@ -48,7 +48,7 @@ public class DetailActivity extends AppCompatActivity {
 
     List<ImageResult> imageResultList;
     SQLiteDatabase sqLiteDatabase;
-
+    MyMemeryCache cache;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,28 +59,43 @@ public class DetailActivity extends AppCompatActivity {
         imageResult = getIntent().getParcelableExtra("result");
         mViewPager = findViewById(R.id.viewPager);
         imageResultList = new ArrayList<>();
-        imageResultList.add(imageResult);
+//        imageResultList.add(imageResult);
         adapter = new MyImageAdapter(imageResultList, this);
         mViewPager.setAdapter(adapter);
-        sqLiteDatabase = ((MyApplication)getApplication()).sqLiteDatabase;
+        sqLiteDatabase = ((MyApplication) getApplication()).sqLiteDatabase;
+        cache  = ((MyApplication) getApplication()).cache;
         progressBar.setVisibility(View.GONE);
-        new Thread() {
-            @Override
-            public void run() {
-                List<ImageResult> data = DBManager.query(sqLiteDatabase, null, 1, DBManager.count(sqLiteDatabase, null));
-                Message message = handler.obtainMessage();
-                Bundle bundle = new Bundle();
-                SparseArray<ImageResult> array = new SparseArray<>();
-                for (int i = 0; i < data.size(); i++) {
-                    array.put(i, data.get(i));
+        if(cache.get("data") ==null){
+            new Thread() {
+                @Override
+                public void run() {
+                    List<ImageResult> data = DBManager.query(sqLiteDatabase, null, 1, DBManager.count(sqLiteDatabase, null));
+                    Message message = handler.obtainMessage();
+                    Bundle bundle = new Bundle();
+                    SparseArray<ImageResult> array = new SparseArray<>();
+                    for (int i = 0; i < data.size(); i++) {
+                        array.put(i, data.get(i));
+                    }
+                    bundle.putSparseParcelableArray("data", array);
+                    message.setData(bundle);
+                    message.what = load_all;
+                    handler.sendMessage(message);
                 }
-                bundle.putSparseParcelableArray("data", array);
-                message.setData(bundle);
-                message.what = load_all;
-                handler.sendMessage(message);
+            }.start();
+        }else{
+            imageResultList.addAll(cache.get("data"));
+            adapter.notifyDataSetChanged();
+            int item = 0;
+            Log.e(tag, imageResult.toString());
+            for (int i = 0; i < imageResultList.size(); i++) {
+                ImageResult imageResult1 = imageResultList.get(i);
+                if (imageResult1.id == DetailActivity.this.imageResult.id) {
+                    item = i;
+                    break;
+                }
             }
-        }.start();
-
+            mViewPager.setCurrentItem(item, true);
+        }
 
         btn_setwallpage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -144,12 +159,14 @@ public class DetailActivity extends AppCompatActivity {
                     Log.e(tag, imageResult.toString());
                     for (int i = 0; i < imageResultList.size(); i++) {
                         ImageResult imageResult1 = imageResultList.get(i);
-                        if (imageResult1.id == imageResult.id) {
+                        if (imageResult1.id == DetailActivity.this.imageResult.id) {
                             item = i;
                             break;
                         }
                     }
-                    mViewPager.setCurrentItem(item);
+                    mViewPager.setCurrentItem(item, true);
+
+                    cache.put("data",imageResultList);
                     break;
             }
         }
