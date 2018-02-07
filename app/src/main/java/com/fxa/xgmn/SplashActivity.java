@@ -1,9 +1,12 @@
 package com.fxa.xgmn;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.animation.AlphaAnimation;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import abc.abc.abc.AdManager;
@@ -24,12 +27,21 @@ public class SplashActivity extends BaseActivity {
 
     private PermissionHelper mPermissionHelper;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         mContext = this;
         setContentView(R.layout.activity_splash);
+
+        ImageView imageView = findViewById(R.id.img_bg);
+
+        AlphaAnimation alphaAnimation = new AlphaAnimation(0.5f,1f);
+
+        alphaAnimation.setDuration(1500);
+
+        imageView.startAnimation(alphaAnimation);
 
         // 当系统为6.0以上时，需要申请权限
         mPermissionHelper = new PermissionHelper(this);
@@ -69,10 +81,17 @@ public class SplashActivity extends BaseActivity {
         mPermissionHelper.onActivityResult(requestCode, resultCode, data);
     }
 
+    SQLiteDatabase sqLiteDatabase;
+    MyMemeryCache cache;
     /**
      * 跑应用的逻辑
      */
     private void runApp() {
+        sqLiteDatabase = DBManager.initDB(this);
+        cache = new MyMemeryCache(4 * 1024 * 1024);
+        ((MyApplication) getApplication()).sqLiteDatabase = sqLiteDatabase;
+        ((MyApplication) getApplication()).cache = cache;
+
         //初始化SDK
         AdManager.getInstance(mContext).init("b02f983d8cf2277e", "c7028cc715170563", true);
         preloadAd();

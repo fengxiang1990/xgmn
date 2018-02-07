@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/img_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
+        android:src="@mipmap/ic_bg" />
 
     <RelativeLayout
         android:id="@+id/rl_splash"
@@ -10,14 +17,4 @@
         android:layout_height="match_parent"
         android:layout_weight="1" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@mipmap/ic_bottom"
-        android:gravity="center"
-        android:padding="20dp"
-        android:text="精选美女,每天更新~"
-        android:textColor="@android:color/white"
-        android:textSize="20sp" />
-
-</LinearLayout>
+</FrameLayout>
