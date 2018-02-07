@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -19,8 +20,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.ImageViewTarget;
-import com.jcodecraeer.xrecyclerview.CustomFooterViewCallBack;
-import com.jcodecraeer.xrecyclerview.XRecyclerView;
+import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,7 +38,8 @@ public class ImageFragment extends Fragment {
     String tag = "ImageFragment";
 
     View rootView;
-    XRecyclerView recyclerViewFinal;
+    SwipeMenuRecyclerView recyclerViewFinal;
+    SwipeRefreshLayout swipeRefreshLayout;
     List<ImageResult> imageResultList = new ArrayList<>();
     MyAdapter adapter;
     String type;
@@ -48,6 +49,7 @@ public class ImageFragment extends Fragment {
     int screenWidth = 0;
     int totalPage = 0;
     boolean isRefresh = false;
+    MyLoadmoreView myLoadmoreView;
 
     @Nullable
     @Override
@@ -55,43 +57,37 @@ public class ImageFragment extends Fragment {
         rootView = inflater.inflate(R.layout.fragment_imagelist, null, true);
         screenWidth = getActivity().getWindowManager().getDefaultDisplay().getWidth();
         recyclerViewFinal = rootView.findViewById(R.id.recyclerView);
+        swipeRefreshLayout = rootView.findViewById(R.id.swipRefeshLayout);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 2);
         recyclerViewFinal.setLayoutManager(gridLayoutManager);
         adapter = new MyAdapter(imageResultList);
         recyclerViewFinal.setAdapter(adapter);
 
-
-        View view = LayoutInflater.from(getActivity()).inflate(R.layout.loading_more, null);
-
-
-        recyclerViewFinal.setArrowImageView(R.mipmap.ic_refresh);
-
-        recyclerViewFinal.setFootView(view, new CustomFooterViewCallBack() {
-
-            @Override
-            public void onLoadingMore(View yourFooterView) {
-
-            }
-
-            @Override
-            public void onLoadMoreComplete(View yourFooterView) {
-
-            }
-
-            @Override
-            public void onSetNoMore(View yourFooterView, boolean noMore) {
-
-            }
-        });
-
-        recyclerViewFinal.setLoadingListener(new XRecyclerView.LoadingListener() {
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 pageNumber = randInt(1, totalPage);
                 isRefresh = true;
                 loadData();
             }
+        });
 
+        myLoadmoreView = new MyLoadmoreView(getActivity());
+        recyclerViewFinal.addFooterView(myLoadmoreView);
+        recyclerViewFinal.setLoadMoreView(myLoadmoreView);
+        recyclerViewFinal.setAutoLoadMore(false);
+        recyclerViewFinal.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (isToBottom(recyclerView)) {
+                    if (myLoadmoreView != null && myLoadmoreView.loadMoreListener != null) {
+                        myLoadmoreView.loadMoreListener.onLoadMore();
+                    }
+                }
+            }
+        });
+        recyclerViewFinal.setLoadMoreListener(new SwipeMenuRecyclerView.LoadMoreListener() {
             @Override
             public void onLoadMore() {
                 pageNumber++;
@@ -99,6 +95,7 @@ public class ImageFragment extends Fragment {
                 loadData();
             }
         });
+
         type = getArguments().getString("type");
         totalCount = DBManager.count(((MainActivity) getActivity()).sqLiteDatabase, type);
         totalPage = totalCount / pageSize == 0 ? totalCount / pageSize : totalCount / pageSize + 1;
@@ -128,8 +125,8 @@ public class ImageFragment extends Fragment {
     }
 
     void onLoadComplete() {
-        recyclerViewFinal.loadMoreComplete();
-        recyclerViewFinal.refreshComplete();
+        recyclerViewFinal.loadMoreFinish(false, true);
+        swipeRefreshLayout.setRefreshing(false);
     }
 
     class MyAdapter extends RecyclerView.Adapter<ImageHolder> {
@@ -216,4 +213,20 @@ public class ImageFragment extends Fragment {
             imageView = itemView.findViewById(R.id.imageView);
         }
     }
+
+
+    public static boolean isToBottom(RecyclerView recyclerView) {
+        GridLayoutManager layoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
+        int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
+        int visibleItemCount = layoutManager.getChildCount();
+        int totalItemCount = layoutManager.getItemCount();
+        int state = recyclerView.getScrollState();
+        if (visibleItemCount > 0 && lastVisibleItemPosition == totalItemCount - 1 && state == recyclerView.SCROLL_STATE_IDLE) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
 }

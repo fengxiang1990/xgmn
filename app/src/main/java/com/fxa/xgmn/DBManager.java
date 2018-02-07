@@ -70,8 +70,8 @@ public class DBManager {
     }
 
     //查询
-    public static List<ImageResult> query(@NonNull SQLiteDatabase sqliteDB, String imgtype, @NonNull int pageNumber, @NonNull int pageSize) {
-        List<ImageResult> imageResults = new ArrayList<>();
+    public static ArrayList<ImageResult> query(@NonNull SQLiteDatabase sqliteDB, String imgtype, @NonNull int pageNumber, @NonNull int pageSize) {
+        ArrayList<ImageResult> imageResults = new ArrayList<>();
         try {
             StringBuilder sql = new StringBuilder("select * from image where 1=1");
             if (!TextUtils.isEmpty(imgtype) && !imgtype.equals("all")) {

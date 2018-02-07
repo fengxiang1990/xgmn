@@ -49,6 +49,7 @@ public class DetailActivity extends AppCompatActivity {
     List<ImageResult> imageResultList;
     SQLiteDatabase sqLiteDatabase;
     MyMemeryCache cache;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,44 +60,23 @@ public class DetailActivity extends AppCompatActivity {
         imageResult = getIntent().getParcelableExtra("result");
         mViewPager = findViewById(R.id.viewPager);
         imageResultList = new ArrayList<>();
-//        imageResultList.add(imageResult);
         adapter = new MyImageAdapter(imageResultList, this);
         mViewPager.setAdapter(adapter);
         sqLiteDatabase = ((MyApplication) getApplication()).sqLiteDatabase;
-        cache  = ((MyApplication) getApplication()).cache;
+        cache = ((MyApplication) getApplication()).cache;
         progressBar.setVisibility(View.GONE);
-        if(cache.get("data") ==null){
-            new Thread() {
-                @Override
-                public void run() {
-                    List<ImageResult> data = DBManager.query(sqLiteDatabase, null, 1, DBManager.count(sqLiteDatabase, null));
-                    Message message = handler.obtainMessage();
-                    Bundle bundle = new Bundle();
-                    SparseArray<ImageResult> array = new SparseArray<>();
-                    for (int i = 0; i < data.size(); i++) {
-                        array.put(i, data.get(i));
-                    }
-                    bundle.putSparseParcelableArray("data", array);
-                    message.setData(bundle);
-                    message.what = load_all;
-                    handler.sendMessage(message);
-                }
-            }.start();
-        }else{
-            imageResultList.addAll(cache.get("data"));
-            adapter.notifyDataSetChanged();
-            int item = 0;
-            Log.e(tag, imageResult.toString());
-            for (int i = 0; i < imageResultList.size(); i++) {
-                ImageResult imageResult1 = imageResultList.get(i);
-                if (imageResult1.id == DetailActivity.this.imageResult.id) {
-                    item = i;
-                    break;
-                }
+        imageResultList.addAll(cache.get("data"));
+        adapter.notifyDataSetChanged();
+        int item = 0;
+        Log.e(tag, imageResult.toString());
+        for (int i = 0; i < imageResultList.size(); i++) {
+            ImageResult imageResult1 = imageResultList.get(i);
+            if (imageResult1.id == DetailActivity.this.imageResult.id) {
+                item = i;
+                break;
             }
-            mViewPager.setCurrentItem(item, true);
         }
-
+        mViewPager.setCurrentItem(item, true);
         btn_setwallpage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -132,7 +112,6 @@ public class DetailActivity extends AppCompatActivity {
     }
 
 
-    final int load_all = 3;
     final int set_success = 1;
     final int set_faild = 2;
 
@@ -147,26 +126,6 @@ public class DetailActivity extends AppCompatActivity {
                 case set_faild:
                     progressBar.setVisibility(View.GONE);
                     Toast.makeText(DetailActivity.this, "设置壁纸失败", Toast.LENGTH_SHORT).show();
-                    break;
-                case load_all:
-                    Bundle bundle = msg.getData();
-                    SparseArray<ImageResult> array = bundle.getSparseParcelableArray("data");
-                    for (int i = 0; i < array.size(); i++) {
-                        imageResultList.add(array.get(i));
-                    }
-                    adapter.notifyDataSetChanged();
-                    int item = 0;
-                    Log.e(tag, imageResult.toString());
-                    for (int i = 0; i < imageResultList.size(); i++) {
-                        ImageResult imageResult1 = imageResultList.get(i);
-                        if (imageResult1.id == DetailActivity.this.imageResult.id) {
-                            item = i;
-                            break;
-                        }
-                    }
-                    mViewPager.setCurrentItem(item, true);
-
-                    cache.put("data",imageResultList);
                     break;
             }
         }

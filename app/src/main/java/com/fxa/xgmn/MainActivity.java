@@ -2,6 +2,8 @@ package com.fxa.xgmn;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -9,14 +11,10 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import abc.abc.abc.nm.sp.SplashViewSettings;
-import abc.abc.abc.nm.sp.SpotManager;
-import abc.abc.abc.nm.sp.SpotRequestListener;
 import fxa.com.xgmn.R;
 
 public class MainActivity extends AppCompatActivity {
@@ -42,12 +40,14 @@ public class MainActivity extends AppCompatActivity {
 
 
     SQLiteDatabase sqLiteDatabase;
+    MyMemeryCache cache;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimary));
-        sqLiteDatabase = ((MyApplication)getApplication()).sqLiteDatabase;
+        sqLiteDatabase = ((MyApplication) getApplication()).sqLiteDatabase;
+        cache = ((MyApplication) getApplication()).cache;
         setContentView(R.layout.activity_main);
         toolbar = findViewById(R.id.toolbar);
         tabLayout = findViewById(R.id.tabLayout);
@@ -129,8 +129,37 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(new ImageFragmentPager(getSupportFragmentManager(), fragments));
 
         tabLayout.setupWithViewPager(viewPager);
+        if (cache.get("data") == null) {
+            new Thread() {
+                @Override
+                public void run() {
+                    ArrayList<ImageResult> data = DBManager.query(sqLiteDatabase, null, 1, DBManager.count(sqLiteDatabase, null));
+                    Message message = handler.obtainMessage();
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelableArrayList("data", data);
+                    message.setData(bundle);
+                    message.what = load_all;
+                    handler.sendMessage(message);
+                }
+            }.start();
+        }
     }
 
+    final int load_all = 3;
+
+
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case load_all:
+                    Bundle bundle = msg.getData();
+                    List<ImageResult> data = bundle.getParcelableArrayList("data");
+                    cache.put("data", data);
+                    break;
+            }
+        }
+    };
 
     class ImageFragmentPager extends FragmentPagerAdapter {
 
