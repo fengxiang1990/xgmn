@@ -10,6 +10,7 @@ import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import abc.abc.abc.AdManager;
 import abc.abc.abc.nm.cm.ErrorCode;
 import abc.abc.abc.nm.sp.SplashViewSettings;
 import abc.abc.abc.nm.sp.SpotListener;
@@ -111,9 +112,9 @@ public class SplashActivity extends BaseActivity {
 
         startActivity(new Intent(this, MainActivity.class));
         //初始化SDK
-//        AdManager.getInstance(mContext).init("b02f983d8cf2277e", "c7028cc715170563", true);
-//        preloadAd();
-//        setupSplashAd(); // 如果需要首次展示开屏，请注释掉本句代码
+        AdManager.getInstance(mContext).init("b02f983d8cf2277e", "c7028cc715170563", true);
+        preloadAd();
+        setupSplashAd(); // 如果需要首次展示开屏，请注释掉本句代码
     }
 
     /**

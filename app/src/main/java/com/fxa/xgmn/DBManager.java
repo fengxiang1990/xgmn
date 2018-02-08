@@ -26,7 +26,7 @@ public class DBManager {
     //把assets目录下的db文件复制到dbpath下
     public static SQLiteDatabase initDB(Context context) {
         String dbDirPath = context.getFilesDir().getAbsolutePath().replace("files", "databases") + File.separator;
-        String dbPath =  dbDirPath + DB_NAME;
+        String dbPath = dbDirPath + DB_NAME;
         File dirFile = new File(dbDirPath);
         File dbFile = new File(dbPath);
 //        //查看数据库文件是否存在
@@ -35,7 +35,7 @@ public class DBManager {
             try {
                 dirFile.mkdir();
                 dbFile.createNewFile();
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -68,9 +68,15 @@ public class DBManager {
 
     public static int count(@NonNull SQLiteDatabase sqliteDB, @NonNull String type) {
         StringBuilder sql = new StringBuilder("select count(*) from image where 1=1");
-        if (!TextUtils.isEmpty(type) && !type.equals("all")) {
+        if (!TextUtils.isEmpty(type)) {
             sql.append(" and type= '" + type + "'");
+            if (type.equals(MainActivity.titles[4])) {
+                sql.append(" or type= '性感'");
+            }
+        }else{
+            sql.append(" and type not in ('xgmn','qcmn','nymn','swmn','bjnmn','hgmn','wgmn')");
         }
+
         Cursor cursor = sqliteDB.rawQuery(sql.toString(), null);
         cursor.moveToFirst();
         int count = cursor.getInt(0);
@@ -82,8 +88,13 @@ public class DBManager {
         ArrayList<ImageResult> imageResults = new ArrayList<>();
         try {
             StringBuilder sql = new StringBuilder("select * from image where 1=1");
-            if (!TextUtils.isEmpty(imgtype) && !imgtype.equals("all")) {
+            if (!TextUtils.isEmpty(imgtype)) {
                 sql.append(" and type= '" + imgtype + "'");
+                if (imgtype.equals(MainActivity.titles[4])) {
+                    sql.append(" or type= '性感'");
+                }
+            }else{
+                sql.append(" and type not in ('xgmn','qcmn','nymn','swmn','bjnmn','hgmn','wgmn')");
             }
             sql.append(" limit ").append(pageSize);
             sql.append(" offset ").append((pageNumber - 1) * pageSize);

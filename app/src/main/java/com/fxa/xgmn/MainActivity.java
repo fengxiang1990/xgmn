@@ -21,22 +21,16 @@ public class MainActivity extends AppCompatActivity {
 
     public static String tag = "MainActivity";
 
-    public static String TYPE_ALL = "all";
-    public static String TYPE_XG = "xgmn";
-    public static String TYPE_QC = "qcmn";
-    public static String TYPE_NY = "nymn";
-    public static String TYPE_SW = "swmn";
-    public static String TYPE_BJN = "bjnmn";
-    public static String TYPE_HG = "hgmn";
-    public static String TYPE_WG = "wgmn";
 
+    public static String[] titles = new String[]{
+            "所有", "风光", "植物", "动物", "美女", "唯美", "创意", "节庆", "影视", "明星", "动漫", "卡通"
+    };
 
     Toolbar toolbar;
 
     TabLayout tabLayout;
 
     ViewPager viewPager;
-    List<String> titles;
 
 
     SQLiteDatabase sqLiteDatabase;
@@ -54,78 +48,20 @@ public class MainActivity extends AppCompatActivity {
         viewPager = findViewById(R.id.viewPager);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        titles = new ArrayList();
-        titles.add("所有");
-        titles.add("性感");
-        titles.add("清纯");
-        titles.add("内衣");
-        titles.add("丝袜");
-        titles.add("比基尼");
-        titles.add("韩国");
-        titles.add("外国");
-
-
-        ImageFragment all = (ImageFragment) ImageFragment.instantiate(this, ImageFragment.class.getName());
-        ImageFragment xg = (ImageFragment) ImageFragment.instantiate(this, ImageFragment.class.getName());
-        ImageFragment qc = (ImageFragment) ImageFragment.instantiate(this, ImageFragment.class.getName());
-        ImageFragment ny = (ImageFragment) ImageFragment.instantiate(this, ImageFragment.class.getName());
-        ImageFragment sw = (ImageFragment) ImageFragment.instantiate(this, ImageFragment.class.getName());
-        ImageFragment bjn = (ImageFragment) ImageFragment.instantiate(this, ImageFragment.class.getName());
-        ImageFragment hg = (ImageFragment) ImageFragment.instantiate(this, ImageFragment.class.getName());
-        ImageFragment wg = (ImageFragment) ImageFragment.instantiate(this, ImageFragment.class.getName());
-
-
-        Bundle bundle = new Bundle();
-        bundle.putString("type", TYPE_ALL);
-        all.setArguments(bundle);
-
-        bundle = new Bundle();
-        bundle.putString("type", TYPE_XG);
-        xg.setArguments(bundle);
-
-        bundle = new Bundle();
-        bundle.putString("type", TYPE_QC);
-        qc.setArguments(bundle);
-
-        bundle = new Bundle();
-        bundle.putString("type", TYPE_NY);
-        ny.setArguments(bundle);
-
-        bundle = new Bundle();
-        bundle.putString("type", TYPE_SW);
-        sw.setArguments(bundle);
-
-        bundle = new Bundle();
-        bundle.putString("type", TYPE_BJN);
-        bjn.setArguments(bundle);
-
-        bundle = new Bundle();
-        bundle.putString("type", TYPE_HG);
-        hg.setArguments(bundle);
-
-        bundle = new Bundle();
-        bundle.putString("type", TYPE_WG);
-        wg.setArguments(bundle);
-
 
         List<ImageFragment> fragments = new ArrayList<>();
-        fragments.add(all);
-        fragments.add(xg);
-        fragments.add(qc);
-        fragments.add(ny);
-        fragments.add(sw);
-        fragments.add(bjn);
-        fragments.add(hg);
-        fragments.add(wg);
 
-        tabLayout.addTab(tabLayout.newTab().setText(titles.get(0)));
-        tabLayout.addTab(tabLayout.newTab().setText(titles.get(1)));
-        tabLayout.addTab(tabLayout.newTab().setText(titles.get(2)));
-        tabLayout.addTab(tabLayout.newTab().setText(titles.get(3)));
-        tabLayout.addTab(tabLayout.newTab().setText(titles.get(4)));
-        tabLayout.addTab(tabLayout.newTab().setText(titles.get(5)));
-        tabLayout.addTab(tabLayout.newTab().setText(titles.get(6)));
-        tabLayout.addTab(tabLayout.newTab().setText(titles.get(7)));
+        for (String type : titles) {
+            ImageFragment imageFragment = (ImageFragment) ImageFragment.instantiate(this, ImageFragment.class.getName());
+            Bundle bundle = new Bundle();
+            bundle.putString("type", type.equals(titles[0]) ? null : type);
+            imageFragment.setArguments(bundle);
+            fragments.add(imageFragment);
+        }
+
+        for (String title : titles) {
+            tabLayout.addTab(tabLayout.newTab().setText(title));
+        }
         viewPager.setAdapter(new ImageFragmentPager(getSupportFragmentManager(), fragments));
 
         tabLayout.setupWithViewPager(viewPager);
@@ -182,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return titles.get(position);
+            return titles[position];
         }
     }
 }
