@@ -6,10 +6,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import abc.abc.abc.AdManager;
 import abc.abc.abc.nm.cm.ErrorCode;
 import abc.abc.abc.nm.sp.SplashViewSettings;
 import abc.abc.abc.nm.sp.SpotListener;
@@ -37,10 +37,26 @@ public class SplashActivity extends BaseActivity {
 
         ImageView imageView = findViewById(R.id.img_bg);
 
-        AlphaAnimation alphaAnimation = new AlphaAnimation(0.5f,1f);
+        AlphaAnimation alphaAnimation = new AlphaAnimation(0.5f, 1f);
 
         alphaAnimation.setDuration(1500);
 
+        alphaAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                runApp();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
         imageView.startAnimation(alphaAnimation);
 
         // 当系统为6.0以上时，需要申请权限
@@ -83,6 +99,7 @@ public class SplashActivity extends BaseActivity {
 
     SQLiteDatabase sqLiteDatabase;
     MyMemeryCache cache;
+
     /**
      * 跑应用的逻辑
      */
@@ -92,10 +109,11 @@ public class SplashActivity extends BaseActivity {
         ((MyApplication) getApplication()).sqLiteDatabase = sqLiteDatabase;
         ((MyApplication) getApplication()).cache = cache;
 
+        startActivity(new Intent(this, MainActivity.class));
         //初始化SDK
-        AdManager.getInstance(mContext).init("b02f983d8cf2277e", "c7028cc715170563", true);
-        preloadAd();
-        setupSplashAd(); // 如果需要首次展示开屏，请注释掉本句代码
+//        AdManager.getInstance(mContext).init("b02f983d8cf2277e", "c7028cc715170563", true);
+//        preloadAd();
+//        setupSplashAd(); // 如果需要首次展示开屏，请注释掉本句代码
     }
 
     /**
