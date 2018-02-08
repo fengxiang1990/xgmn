@@ -49,7 +49,7 @@ public class SplashActivity extends BaseActivity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                runApp();
+                applyPermission();
             }
 
             @Override
@@ -59,6 +59,11 @@ public class SplashActivity extends BaseActivity {
         });
         imageView.startAnimation(alphaAnimation);
 
+
+    }
+
+
+    void applyPermission() {
         // 当系统为6.0以上时，需要申请权限
         mPermissionHelper = new PermissionHelper(this);
         mPermissionHelper.setOnApplyPermissionListener(new PermissionHelper.OnApplyPermissionListener() {
