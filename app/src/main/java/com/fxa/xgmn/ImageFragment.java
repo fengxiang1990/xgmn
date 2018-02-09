@@ -19,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.ImageViewTarget;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 
@@ -152,6 +153,7 @@ public class ImageFragment extends Fragment {
             holder.imageView.setLayoutParams(layoutParams);
             Glide.with(getContext())
                     .asBitmap()
+                    .apply(RequestOptions.overrideOf(800,600))
                     .load(Uri.parse(imageResult.url))
                     .into(new ImageViewTarget<Bitmap>(holder.imageView) {
 
