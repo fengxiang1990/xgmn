@@ -153,7 +153,7 @@ public class ImageFragment extends Fragment {
             holder.imageView.setLayoutParams(layoutParams);
             Glide.with(getContext())
                     .asBitmap()
-                    .apply(RequestOptions.overrideOf(800,600))
+                    .apply(RequestOptions.overrideOf(400,300))
                     .load(Uri.parse(imageResult.url))
                     .into(new ImageViewTarget<Bitmap>(holder.imageView) {
 
